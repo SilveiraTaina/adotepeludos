@@ -1,13 +1,23 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
 
+import { Redirect } from 'expo-router';
+import { useState, useEffect } from 'react';
+
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
 
+const isAuthenticated = false; //simula autenticação do login, modificar depois com a lógica
+
 export default function HomeScreen() {
+
+   if (!isAuthenticated) {
+    return <Redirect href="/login" />; //se não estiver autenticado, retorna ao login
+  }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
