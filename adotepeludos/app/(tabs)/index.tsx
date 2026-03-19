@@ -1,108 +1,276 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { Redirect } from 'expo-router';
-import { useState, useEffect } from 'react';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
-const isAuthenticated = false; //simula autenticação do login, modificar depois com a lógica
+import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
+  const pets = [
+    { id: '1', name: 'Rex', age: '2 anos', image: 'https://via.placeholder.com/150/FF6B00/ffffff?text=Rex', type: 'Cachorro' },
+    { id: '2', name: 'Mia', age: '1 ano', image: 'https://via.placeholder.com/150/FFA500/ffffff?text=Mia', type: 'Gato' },
+    { id: '3', name: 'Bob', age: '3 anos', image: 'https://via.placeholder.com/150/FF6B00/ffffff?text=Bob', type: 'Cachorro' },
+    { id: '4', name: 'Luna', age: '6 meses', image: 'https://via.placeholder.com/150/FFA500/ffffff?text=Luna', type: 'Gato' },
+  ];
 
-   if (!isAuthenticated) {
-    return <Redirect href="/login" />; //se não estiver autenticado, retorna ao login
-  }
+  const campaigns = [
+    { 
+      id: '1', 
+      title: 'Ração para Canil São Francisco', 
+      goal: 1500, 
+      current: 890,
+      description: 'Ajude a alimentar 50 cães resgatados'
+    },
+    { 
+      id: '2', 
+      title: 'Campanha de Castração', 
+      goal: 3000, 
+      current: 1250,
+      description: 'Meta: castrar 20 animais de rua'
+    },
+  ];
+
+  const handleSeeAllPets = () => {
+    router.push('/(tabs)/animais');
+  };
+
+  const handlePetDetails = (petId: string) => {
+    router.push(`/pet/${petId}`);
+  };
+
+  const handleCampaignDetails = (campaignId: string) => {
+    router.push(`/campanha/${campaignId}`);
+  };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <ScrollView style={styles.container}>
+      {/* header*/}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Adote Peludos</Text>
+      </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {/* campo de busca */}
+      <View style={styles.searchContainer}>
+        <TextInput 
+          placeholder="Buscar animais..." 
+          style={styles.searchInput}
+          placeholderTextColor="#999"
+        />
+      </View>
+
+      {/* boas vindas*/}
+      <View style={styles.welcomeSection}>
+        <Text style={styles.welcomeTitle}>Encontre seu melhor amigo</Text>
+        <Text style={styles.welcomeSubtitle}>Adote um peludo hoje 💛</Text>
+      </View>
+
+      {/* seção de adoções */}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Adoções</Text>
+        <TouchableOpacity onPress={handleSeeAllPets}>
+          <Text style={styles.seeAllText}>Ver todos</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.petsScroll}
+      >
+        {pets.map((pet) => (
+          <TouchableOpacity 
+            key={pet.id} 
+            style={styles.petCard}
+            onPress={() => handlePetDetails(pet.id)}
+          >
+            <Image source={{ uri: pet.image }} style={styles.petImage} />
+            <Text style={styles.petName}>{pet.name}</Text>
+            <Text style={styles.petInfo}>{pet.age} • {pet.type}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* campanhas*/}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Campanhas Ativas</Text>
+      </View>
+
+      {campaigns.map((campaign) => {
+        const progress = (campaign.current / campaign.goal) * 100;
+        
+        return (
+          <TouchableOpacity 
+            key={campaign.id} 
+            style={styles.campaignCard}
+            onPress={() => handleCampaignDetails(campaign.id)}
+          >
+            <Text style={styles.campaignTitle}>{campaign.title}</Text>
+            <Text style={styles.campaignDescription}>{campaign.description}</Text>
+            
+            {/* barra de progresso */}
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBar, { width: `${progress}%` }]} />
+            </View>
+            
+            <View style={styles.campaignFooter}>
+              <Text style={styles.campaignGoal}>Meta: R$ {campaign.goal}</Text>
+              <Text style={styles.campaignCurrent}>
+                Arrecadado: R$ {campaign.current} ({progress.toFixed(0)}%)
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+
+      {/* espaço */}
+      <View style={{ height: 20 }} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#FF6B00',
+    paddingTop: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+  },
+  searchInput: {
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 25,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  welcomeSection: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 10,
+  },
+  welcomeTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  sectionHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    marginTop: 10,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  seeAllText: {
+    color: '#FF6B00',
+    fontWeight: '600',
+  },
+  petsScroll: {
+    paddingLeft: 20,
+    backgroundColor: '#fff',
+    paddingBottom: 20,
+  },
+  petCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginRight: 15,
+    width: 140,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  petImage: {
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  petName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  petInfo: {
+    fontSize: 14,
+    color: '#666',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  campaignCard: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    marginBottom: 15,
+    padding: 15,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  campaignTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  campaignDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 15,
+  },
+  progressBarContainer: {
+    height: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 4,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#FF6B00',
+    borderRadius: 4,
+  },
+  campaignFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  campaignGoal: {
+    fontSize: 14,
+    color: '#666',
+  },
+  campaignCurrent: {
+    fontSize: 14,
+    color: '#FF6B00',
+    fontWeight: '600',
   },
 });
