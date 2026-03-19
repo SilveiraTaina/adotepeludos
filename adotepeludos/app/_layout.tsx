@@ -1,29 +1,54 @@
 import { Stack } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import LoadingScreen from '../components/LoadingScreen';
 
 function RootLayoutNav() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#FF6B00" />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       {!user ? (
-        // se não logado, mostra login
-        <Stack.Screen name="login" options={{ headerShown: false }} />
+        // se não logado, mostra login como tela inicial
+        <Stack.Screen name="login" />
       ) : (
         // se logado, mostra as tabs
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" />
       )}
-      {/*esconde o index padrão */}
-      <Stack.Screen name="index" options={{ href: null }} />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
+}import { Stack } from 'expo-router';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import LoadingScreen from '../components/LoadingScreen';
+
+function RootLayoutNav() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      {!user ? (
+        // Se não logado, mostra login como tela inicial
+        <Stack.Screen name="login" />
+      ) : (
+        // Se logado, mostra as tabs
+        <Stack.Screen name="(tabs)" />
+      )}
+      {/* Não precisamos mais do index com href */}
     </Stack>
   );
 }
