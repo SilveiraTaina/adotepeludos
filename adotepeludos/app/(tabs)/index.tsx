@@ -3,10 +3,34 @@ import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const pets = [
-    { id: '1', name: 'Rex', age: '2 anos', image: 'https://via.placeholder.com/150/FF6B00/ffffff?text=Rex', type: 'Cachorro' },
-    { id: '2', name: 'Mia', age: '1 ano', image: 'https://via.placeholder.com/150/FFA500/ffffff?text=Mia', type: 'Gato' },
-    { id: '3', name: 'Bob', age: '3 anos', image: 'https://via.placeholder.com/150/FF6B00/ffffff?text=Bob', type: 'Cachorro' },
-    { id: '4', name: 'Luna', age: '6 meses', image: 'https://via.placeholder.com/150/FFA500/ffffff?text=Luna', type: 'Gato' },
+    { 
+      id: '1', 
+      name: 'Rex', 
+      age: '2 anos', 
+      image: require('../../assets/images/rex.jpg'),
+      type: 'Cachorro' 
+    },
+    { 
+      id: '2', 
+      name: 'Mia', 
+      age: '1 ano', 
+      image: require('../../assets/images/mia.png'),
+      type: 'Gato' 
+    },
+    { 
+      id: '3', 
+      name: 'Bob', 
+      age: '3 anos', 
+      image: require('../../assets/images/bob.png'),
+      type: 'Cachorro' 
+    },
+    { 
+      id: '4', 
+      name: 'Luna', 
+      age: '6 meses', 
+      image: require('../../assets/images/luna.jpg'), 
+      type: 'Gato' 
+    },
   ];
 
   const campaigns = [
@@ -40,12 +64,12 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* header*/}
+      {}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Adote Peludos</Text>
       </View>
 
-      {/* campo de busca */}
+      {}
       <View style={styles.searchContainer}>
         <TextInput 
           placeholder="Buscar animais..." 
@@ -54,13 +78,13 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* boas vindas*/}
+      {}
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeTitle}>Encontre seu melhor amigo</Text>
         <Text style={styles.welcomeSubtitle}>Adote um peludo hoje 💛</Text>
       </View>
 
-      {/* seção de adoções */}
+      {}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Adoções</Text>
         <TouchableOpacity onPress={handleSeeAllPets}>
@@ -79,14 +103,15 @@ export default function HomeScreen() {
             style={styles.petCard}
             onPress={() => handlePetDetails(pet.id)}
           >
-            <Image source={{ uri: pet.image }} style={styles.petImage} />
+            {}
+            <Image source={pet.image} style={styles.petImage} />
             <Text style={styles.petName}>{pet.name}</Text>
             <Text style={styles.petInfo}>{pet.age} • {pet.type}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* campanhas*/}
+      {}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Campanhas Ativas</Text>
       </View>
