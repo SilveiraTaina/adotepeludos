@@ -11,9 +11,6 @@ import {
     View,
     TouchableOpacity,
 } from "react-native";
-import Index from ".";
-
-
 //componente
 
 
@@ -21,58 +18,65 @@ export default function telaConfirmacaoScreen() {
 
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Adote Peludos</Text>
-            </View>
+
+        /* Header */
+        <><View style={styles.header}>
+            <Text style={styles.headerTitle}>Adote Peludos</Text>
+        </View>
+
+            <ScrollView style={styles.container}
+                contentContainerStyle={styles.body}
+                showsVerticalScrollIndicator={false}>
+
+                <View style={styles.content}>
+                    <View>
+
+                        <Image source={require('../assets/images/verifica.png')} style={styles.imgConf} />
+
+                        <Text style={[styles.textCenter,
+                        { fontWeight: "bold", fontSize: 20, marginTop: 10, marginBottom: 20 }]}>
+                            Solicitação enviada!
+                        </Text>
+                        <Text style={[styles.textCenter, { marginBottom: 20 }]}>A equipe entrara em contato
+                            em breve via {"\n"}WhatsApp.</Text>
+                    </View>
+
+                    <View style={styles.containerInstrucoes}>
+                        <Text style={[styles.textCenter, {
+                            color: '#c0392b',
+                            fontWeight: 'bold', marginBottom: 8,
+                            textAlign: "left",
+                        }]}>
+                            Próximos Passos
+                        </Text>
+                        <Text style={[styles.textCenter, { color: '#c0392b', lineHeight: 22, textAlign: "left", }]}>
+                            1. Aguardar contato por WhatsApp.{"\n"}
+                            2. Visita ao animal;{"\n"}
+                            3. Assinar termo de adoção,
+                        </Text>
+                    </View>
 
 
-            <View>
+                    <View>
 
-                <Image source={require('../assets/images/verifica.png')} style={styles.imgConf} />
+                        <TouchableOpacity onPress={() => router.replace("/perfil")}
+                            style={styles.botaoMinhasSolicitaçoes}>
+                            <Text style={[styles.textCenter, { color: "#fff", fontWeight: "bold" }]}>
+                                Ver minha Solicitação
+                            </Text>
+                        </TouchableOpacity>
 
-                <Text>
-                    Solicitação enviada!
-                </Text>
-                <Text>A equipe entrara em contato
-                    em breve via WhatsApp.</Text>
-            </View>
+                        <TouchableOpacity onPress={() => router.replace("/(tabs)")}
+                            style={styles.botaoHome}
+                        >
+                            <Text style={styles.textCenter}>
+                                Voltar ao início
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
-            <View>
-                <Text>
-                    Próximos Passos
-                </Text>
-                <Text>
-                    1. Aguardar contato por WhatsApp.
-                    2. Visita ao animal;
-                    3. Assinar termo de adoção,
-                </Text>
-            </View>
-
-
-            <View>
-
-                <Text style={{ textAlign: 'center' }}>
-                    Ver minha solicitação
-                </Text>
-
-                <TouchableOpacity onPress={() => router.replace("/(tabs)")}>
-                    <Text>
-                        Voltar ao início
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-
-                <Button
-                    title="Botao teste ir para home"
-                    onPress={() => router.push("/(tabs)")}
-                />
-            </View>
-
-        </ScrollView>
+                </View>
+            </ScrollView ></>
     );
 }
 /*estilos */
@@ -90,7 +94,11 @@ const styles = StyleSheet.create({
     headerTitle: { color: "#fff", fontSize: 22, fontWeight: "bold" },
     headerSub: { color: "rgba(255,255,255,0.85)", fontSize: 14, marginTop: 2 },
 
-    body: { padding: 16 },
+    body: {
+        flexGrow: 1, padding: 16, alignItems: "center",
+        marginTop: 70,
+        justifyContent: "flex-start",
+    },
 
     sectionLabel: {
         fontSize: 11,
@@ -101,11 +109,46 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
 
-    imgConf: {
-        width: 100,
-        height: 100,
-        alignItems: "center",
+    content: {
+        width: "100%",
+        alignItems: "center"
     },
+
+    textCenter: {
+        textAlign: "center",
+        marginBottom: 8,
+        fontSize: 16
+    },
+
+    imgConf: {
+        width: 200,
+        height: 200,
+        alignSelf: "center",
+    },
+    botaoMinhasSolicitaçoes: {
+        paddingVertical: 8,
+        paddingHorizontal: 80,
+        borderRadius: 8,
+        marginTop: 10,
+        backgroundColor: "#FF6B00"
+    },
+    botaoHome: {
+        paddingVertical: 8,
+        paddingHorizontal: 80,
+        borderRadius: 8,
+        marginTop: 10,
+        borderWidth: 2,
+        borderColor: "#999"
+    },
+
+    containerInstrucoes: {
+        borderWidth: 2,
+        borderColor: '#e07060',
+        backgroundColor: '#fde8e4',
+        borderRadius: 10,
+        padding: 12,
+        marginTop: 20
+    }
 
 })
 
