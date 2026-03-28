@@ -1,5 +1,5 @@
 
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 
 import React from "react";
 import {
@@ -7,9 +7,8 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    Button,
-    View,
     TouchableOpacity,
+    View
 } from "react-native";
 //componente
 

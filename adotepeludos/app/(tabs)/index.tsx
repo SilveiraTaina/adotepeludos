@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ANIMAIS_MOCK } from "../perfilanimal";
 
 export default function HomeScreen() {
   const handleContribuir = (campaignId: string, campaignTitle: string) => {
@@ -16,37 +17,6 @@ export default function HomeScreen() {
       params: { id: campaignId, title: campaignTitle },
     });
   };
-
-  const pets = [
-    {
-      id: "1",
-      name: "Rex",
-      age: "2 anos",
-      image: require("../../assets/images/rex.jpg"),
-      type: "Cachorro",
-    },
-    {
-      id: "2",
-      name: "Mia",
-      age: "1 ano",
-      image: require("../../assets/images/mia.png"),
-      type: "Gato",
-    },
-    {
-      id: "3",
-      name: "Bob",
-      age: "3 anos",
-      image: require("../../assets/images/bob.png"),
-      type: "Cachorro",
-    },
-    {
-      id: "4",
-      name: "Luna",
-      age: "6 meses",
-      image: require("../../assets/images/luna.jpg"),
-      type: "Gato",
-    },
-  ];
 
   const campaigns = [
     {
@@ -79,12 +49,14 @@ export default function HomeScreen() {
     router.push("/(tabs)/doacoes");
   };
 
-  const handlePetDetails = (petId: string) => {
-    router.push(`/pet/${petId}`);
-  };
 
-  const handleCampaignDetails = (campaignId: string) => {
-    router.push(`/campanha/${campaignId}`);
+  const handlePetDetails = (petId: string) => {
+    const animal = ANIMAIS_MOCK.find((a) => a.id === petId);
+    if (!animal) return;
+    router.push({
+      pathname: "/perfilanimal",
+      params: { animalJson: JSON.stringify(animal) },
+    });
   };
 
   const featuredProgress =
@@ -92,12 +64,10 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Adote Peludos</Text>
       </View>
 
-      {/* Campo de busca */}
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Buscar animais..."
@@ -106,13 +76,11 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Boas vindas */}
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeTitle}>Encontre seu melhor amigo</Text>
         <Text style={styles.welcomeSubtitle}>Adote um peludo hoje 💛</Text>
       </View>
 
-      {/* Seção de adoções */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Adoções</Text>
         <TouchableOpacity onPress={handleSeeAllPets}>
@@ -125,22 +93,36 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.petsScroll}
       >
-        {pets.map((pet) => (
+        {ANIMAIS_MOCK.map((pet) => (
           <TouchableOpacity
             key={pet.id}
             style={styles.petCard}
             onPress={() => handlePetDetails(pet.id)}
           >
-            <Image source={pet.image} style={styles.petImage} />
-            <Text style={styles.petName}>{pet.name}</Text>
-            <Text style={styles.petInfo}>
-              {pet.age} • {pet.type}
+            {pet.imagem ? (
+              <Image
+                source={
+                  typeof pet.imagem === "string"
+                    ? { uri: pet.imagem }
+                    : pet.imagem
+                }
+                style={styles.petImage}
+              />
+            ) : (
+              <View style={styles.petImagePlaceholder}>
+                <Text style={{ fontSize: 36 }}>
+                  {pet.especie === "Cachorro" ? "🐶" : "🐱"}
+                </Text>
+              </View>
+            )}
+            <Text style={styles.petName}>{pet.nome}</Text>
+            <Text style={styles.petInfoText}>
+              {pet.idade} • {pet.especie}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* Seção de Campanhas - Apenas a em destaque */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Campanha em Destaque</Text>
         <TouchableOpacity onPress={handleSeeAllCampaigns}>
@@ -148,7 +130,6 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Card da campanha em destaque */}
       <View style={styles.featuredCampaignCard}>
         <View style={styles.featuredBadge}>
           <Text style={styles.featuredBadgeText}>🔥 Mais próxima da meta</Text>
@@ -161,7 +142,6 @@ export default function HomeScreen() {
           {featuredCampaign.description}
         </Text>
 
-        {/* Barra de Progresso */}
         <View style={styles.progressBarContainer}>
           <View
             style={[styles.progressBar, { width: `${featuredProgress}%` }]}
@@ -184,7 +164,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Botão de contribuir */}
         <TouchableOpacity
           style={styles.donateButtonContainer}
           onPress={() =>
@@ -195,17 +174,13 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Espaço */}
       <View style={{ height: 20 }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
+  container: { flex: 1, backgroundColor: "#f5f5f5" },
   header: {
     backgroundColor: "#FF6B00",
     paddingTop: 50,
@@ -242,10 +217,7 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 5,
   },
-  welcomeSubtitle: {
-    fontSize: 16,
-    color: "#666",
-  },
+  welcomeSubtitle: { fontSize: 16, color: "#666" },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -255,15 +227,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginTop: 10,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  seeAllText: {
-    color: "#FF6B00",
-    fontWeight: "600",
-  },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#333" },
+  seeAllText: { color: "#FF6B00", fontWeight: "600" },
   petsScroll: {
     paddingLeft: 20,
     backgroundColor: "#fff",
@@ -281,22 +246,30 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: "#f0f0f0",
+    overflow: "hidden",
   },
+  // Imagem com altura definida para aparecer corretamente
   petImage: {
-    width: "100%",
+    width: 140,
     height: 120,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    resizeMode: "cover",
+  },
+  petImagePlaceholder: {
+    width: 140,
+    height: 120,
+    backgroundColor: "#FFF0E0",
+    alignItems: "center",
+    justifyContent: "center",
   },
   petName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
     color: "#333",
     paddingHorizontal: 10,
-    paddingTop: 10,
+    paddingTop: 8,
   },
-  petInfo: {
-    fontSize: 14,
+  petInfoText: {
+    fontSize: 13,
     color: "#666",
     paddingHorizontal: 10,
     paddingBottom: 10,
@@ -323,22 +296,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 12,
   },
-  featuredBadgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-  },
+  featuredBadgeText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
   featuredCampaignTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 8,
   },
-  featuredCampaignDescription: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 16,
-  },
+  featuredCampaignDescription: { fontSize: 14, color: "#666", marginBottom: 16 },
   progressBarContainer: {
     height: 10,
     backgroundColor: "#f0f0f0",
@@ -346,27 +311,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     overflow: "hidden",
   },
-  progressBar: {
-    height: "100%",
-    backgroundColor: "#FF6B00",
-    borderRadius: 5,
-  },
+  progressBar: { height: "100%", backgroundColor: "#FF6B00", borderRadius: 5 },
   campaignFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
   },
-  campaignGoal: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 4,
-  },
-  campaignCurrent: {
-    fontSize: 14,
-    color: "#FF6B00",
-    fontWeight: "bold",
-  },
+  campaignGoal: { fontSize: 13, color: "#666", marginBottom: 4 },
+  campaignCurrent: { fontSize: 14, color: "#FF6B00", fontWeight: "bold" },
   progressCircle: {
     width: 60,
     height: 60,
@@ -377,20 +330,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#FF6B00",
   },
-  progressCircleText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#FF6B00",
-  },
+  progressCircleText: { fontSize: 16, fontWeight: "bold", color: "#FF6B00" },
   donateButtonContainer: {
     borderTopWidth: 1,
     borderTopColor: "#f0f0f0",
     paddingTop: 12,
     alignItems: "center",
   },
-  donateButtonText: {
-    color: "#FF6B00",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  donateButtonText: { color: "#FF6B00", fontSize: 14, fontWeight: "600" },
 });

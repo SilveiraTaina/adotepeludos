@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../contexts/AuthContext'; 
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function PerfilScreen() {
   const { user, signOut } = useAuth();
@@ -27,11 +27,11 @@ export default function PerfilScreen() {
   };
 
   const menuItems = [
-    { icon: 'person-outline', title: 'Meus Dados', onPress: () => {} },
-    { icon: 'heart-outline', title: 'Minhas Adoções', onPress: () => {} },
-    { icon: 'cash-outline', title: 'Minhas Doações', onPress: () => {} },
-    { icon: 'settings-outline', title: 'Configurações', onPress: () => {} },
-    { icon: 'help-circle-outline', title: 'Ajuda', onPress: () => {} },
+    { icon: 'person-outline' as const, title: 'Meus Dados', onPress: () => {} },
+    { icon: 'heart-outline' as const, title: 'Minhas Adoções', onPress: () => {} },
+    { icon: 'cash-outline' as const, title: 'Minhas Doações', onPress: () => {} },
+    { icon: 'settings-outline' as const, title: 'Configurações', onPress: () => {} },
+    { icon: 'help-circle-outline' as const, title: 'Ajuda', onPress: () => {} },
   ];
 
   return (

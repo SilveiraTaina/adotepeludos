@@ -1,5 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { useState } from 'react';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginScreen() {

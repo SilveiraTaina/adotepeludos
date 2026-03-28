@@ -1,6 +1,6 @@
-import { Stack } from 'expo-router';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { Redirect, Stack } from 'expo-router';
 import LoadingScreen from '../components/LoadingScreen';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 function RootLayoutNav() {
   const { user, loading } = useAuth();
@@ -9,15 +9,17 @@ function RootLayoutNav() {
     return <LoadingScreen />;
   }
 
+  if (!user) {
+    return <Redirect href="/login" />;
+  }
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {!user ? (
-        // se não logado, mostra login como tela inicial
-        <Stack.Screen name="login" />
-      ) : (
-        // se logado, mostra as tabs
-        <Stack.Screen name="(tabs)" />
-      )}
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="perfilanimal" />
+      <Stack.Screen name="formularioAdocao" />
+      <Stack.Screen name="telaConfirmacao" />
     </Stack>
   );
 }

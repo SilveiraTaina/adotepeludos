@@ -1,86 +1,52 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 import {
-  Image,
   FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View, Button
+  View
 } from "react-native";
+import { ANIMAIS_MOCK } from "../perfilanimal";
 
 type Filtro = "Todos" | "Cachorro" | "Gato";
 
-// componente 
-
-export default function DoacoesScreen() {
-
+export default function AnimaisScreen() {
   const router = useRouter();
-
-  const pets = [
-    {
-      id: "1",
-      name: "Rex",
-      age: "2 anos",
-      image: require("../../assets/images/rex.jpg"),
-      type: "Cachorro",
-    },
-    {
-      id: "2",
-      name: "Mia",
-      age: "1 ano",
-      image: require("../../assets/images/mia.png"),
-      type: "Gato",
-    },
-    {
-      id: "3",
-      name: "Bob",
-      age: "3 anos",
-      image: require("../../assets/images/bob.png"),
-      type: "Cachorro",
-    },
-    {
-      id: "4",
-      name: "Luna",
-      age: "6 meses",
-      image: require("../../assets/images/luna.jpg"),
-      type: "Gato",
-    },
-  ];
-
-  //envia para o perfil do bicho 
-  const handlePetDetails = (petId: string) => {
-    router.push(`/pet/${petId}`);
-  };
 
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<Filtro>("Todos");
 
   const botoes: Filtro[] = ["Todos", "Cachorro", "Gato"];
 
-  const resultado = pets.filter((pet) => {
+  const resultado = ANIMAIS_MOCK.filter((pet) => {
     const buscaOk =
-      pet.name.toLowerCase().includes(busca.toLowerCase()) ||
-      pet.type.toLowerCase().includes(busca.toLowerCase());
+      pet.nome.toLowerCase().includes(busca.toLowerCase()) ||
+      pet.especie.toLowerCase().includes(busca.toLowerCase()) ||
+      pet.raca.toLowerCase().includes(busca.toLowerCase());
 
-    const filtroOk = filtro === "Todos" || pet.type === filtro;
+    const filtroOk = filtro === "Todos" || pet.especie === filtro;
 
     return buscaOk && filtroOk;
   });
 
+function handlePetDetails(pet: typeof ANIMAIS_MOCK[0]) {
+  router.push({
+    pathname: "/perfilanimal",
+    params: { animalJson: JSON.stringify(pet) },
+  });
+}
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Cabeçalho */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Animais</Text>
       </View>
 
       <View style={styles.petInfoContainer}>
-        {/* barra de procura */}
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Buscar animais..."
@@ -89,7 +55,6 @@ export default function DoacoesScreen() {
             style={styles.searchInput}
             placeholderTextColor="#999"
           />
-          {/* Botões de filtro */}
           <View style={styles.filtrosContainer}>
             {botoes.map((botao) => (
               <TouchableOpacity
@@ -113,7 +78,6 @@ export default function DoacoesScreen() {
           </View>
         </View>
 
-        {/* Lista de animais */}
         <FlatList
           data={resultado}
           keyExtractor={(item) => item.id}
@@ -122,13 +86,44 @@ export default function DoacoesScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.petCard}
-              onPress={() => handlePetDetails(item.id)}
+              onPress={() => handlePetDetails(item)}
             >
-              <Image source={item.image} style={styles.petImage} />
-              <Text style={styles.petName}>{item.name}</Text>
-              <Text style={styles.petInfo}>
-                {item.age} • {item.type}
-              </Text>
+              {item.imagem ? (
+                <Image
+                  source={
+                    typeof item.imagem === "string"
+                      ? { uri: item.imagem }
+                      : item.imagem
+                  }
+                  style={styles.petImage}
+                />
+              ) : (
+                <View style={styles.petImagePlaceholder}>
+                  <Text style={{ fontSize: 32 }}>
+                    {item.especie === "Cachorro" ? "🐶" : "🐱"}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.petInfo}>
+                <Text style={styles.petName}>{item.nome}</Text>
+                <Text style={styles.petSubInfo}>
+                  {item.idade} · {item.especie}
+                </Text>
+                <Text style={styles.petRaca}>{item.raca}</Text>
+                <View style={styles.badgeRow}>
+                  {item.vacinado && (
+                    <View style={styles.badgeVerde}>
+                      <Text style={styles.badgeVerdeText}>✓ Vacinado</Text>
+                    </View>
+                  )}
+                  {item.castrado && (
+                    <View style={styles.badgeVerde}>
+                      <Text style={styles.badgeVerdeText}>✓ Castrado</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              <Text style={styles.seta}>›</Text>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
@@ -138,24 +133,12 @@ export default function DoacoesScreen() {
       </View>
 
       <View style={{ height: 32 }} />
-
-
-      <View>
-        <Button
-          title="Botao teste ir para o formulario"
-          onPress={() => router.push("/formularioAdocao")}
-        />
-      </View>
     </ScrollView>
   );
 }
 
-
-// estilos 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-
   header: {
     backgroundColor: "#FF6B00",
     paddingTop: 56,
@@ -163,18 +146,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerTitle: { color: "#fff", fontSize: 22, fontWeight: "bold" },
-  headerSub: { color: "rgba(255,255,255,0.85)", fontSize: 14, marginTop: 2 },
-
-  body: { padding: 16 },
-
-  sectionLabel: {
-    fontSize: 11,
-    color: "#999",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
   searchContainer: {
     paddingHorizontal: 20,
     paddingVertical: 15,
@@ -190,7 +161,6 @@ const styles = StyleSheet.create({
   },
   filtrosContainer: {
     flexDirection: "row",
-    paddingHorizontal: 20,
     paddingVertical: 12,
     gap: 10,
     backgroundColor: "#fff",
@@ -209,20 +179,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6B00",
     borderColor: "#FF6B00",
   },
-  filtroTexto: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "600",
-  },
-  filtroTextoAtivo: {
-    color: "#fff",
-  },
-  listContent: {
-    padding: 15,
-  },
-  row: {
-    justifyContent: "space-between",
-  },
+  filtroTexto: { fontSize: 14, color: "#666", fontWeight: "600" },
+  filtroTextoAtivo: { color: "#fff" },
+  listContent: { padding: 15 },
   petCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -237,34 +196,31 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: "#f0f0f0",
+    overflow: "hidden",
   },
-  petImage: {
+  petImage: { width: 100, height: 110, resizeMode: "cover" },
+  petImagePlaceholder: {
     width: 100,
-    height: 100,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    height: 110,
+    backgroundColor: "#FFF0E0",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  petName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+  petInfo: { flex: 1, paddingHorizontal: 12, paddingVertical: 10 },
+  petName: { fontSize: 16, fontWeight: "bold", color: "#FF6B00", marginBottom: 2 },
+  petSubInfo: { fontSize: 13, color: "#666", marginBottom: 2 },
+  petRaca: { fontSize: 12, color: "#aaa", marginBottom: 6 },
+  badgeRow: { flexDirection: "row", gap: 6, flexWrap: "wrap" },
+  badgeVerde: {
+    backgroundColor: "#E8F5E9",
+    borderWidth: 1,
+    borderColor: "#2E7D32",
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  petInfo: {
-    fontSize: 14,
-    color: "#666",
-    paddingHorizontal: 10,
-    marginTop: 4,
-  },
-
-  petInfoContainer: {
-    flex: 1,
-    paddingHorizontal: 5,
-  },
-
-  emptyText: {
-    textAlign: "center",
-    color: "#999",
-    marginTop: 40,
-    fontSize: 16,
-  },
+  badgeVerdeText: { fontSize: 10, color: "#2E7D32", fontWeight: "600" },
+  seta: { fontSize: 24, color: "#FFA500", paddingRight: 12 },
+  petInfoContainer: { flex: 1, paddingHorizontal: 5 },
+  emptyText: { textAlign: "center", color: "#999", marginTop: 40, fontSize: 16 },
 });
